@@ -52,7 +52,15 @@ export function AuthProvider({ children }) {
     return { data, error };
   };
 
-
+ const signInWithGoogle = async () => {
+    return await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        // Updated to your new Vercel URL
+        redirectTo: 'https://wardrobe-ai-t1cl.vercel.app'
+      }
+    });
+  };
 
   const signOut = async () => {
     await supabase.auth.signOut();

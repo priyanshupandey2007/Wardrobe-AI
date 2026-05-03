@@ -67,7 +67,6 @@ export default function AuthPage() {
       <div className="hidden lg:flex lg:w-[55%] flex-col justify-between p-12
         bg-[#f5f0ea] dark:bg-stone-900 transition-colors duration-300">
 
-        {/* Top */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <LogoIcon />
@@ -91,7 +90,6 @@ export default function AuthPage() {
           </div>
         </div>
 
-        {/* Middle */}
         <div>
           <p className="text-stone-400 dark:text-stone-500 text-xs tracking-[0.2em] uppercase mb-4">Personal Style</p>
           <h1 className="text-6xl font-medium text-stone-900 dark:text-white leading-[1.1] mb-6">
@@ -112,7 +110,6 @@ export default function AuthPage() {
           </div>
         </div>
 
-        {/* Stats */}
         <div className="flex items-end gap-10">
           {[
             { num: '2.4k', label: 'Outfits created' },
@@ -132,7 +129,6 @@ export default function AuthPage() {
         bg-white dark:bg-stone-950 transition-colors duration-300">
         <div className="w-full max-w-sm">
 
-          {/* Mobile: logo + toggle */}
           <div className="flex items-center justify-between mb-10 lg:hidden">
             <div className="flex items-center gap-2">
               <LogoIcon size="w-8 h-8" iconSize="w-4 h-4" />
@@ -149,7 +145,6 @@ export default function AuthPage() {
             </button>
           </div>
 
-          {/* Desktop: theme toggle */}
           <div className="hidden lg:flex justify-end mb-6">
             <button
               onClick={() => setDark(!dark)}
@@ -164,7 +159,6 @@ export default function AuthPage() {
             </button>
           </div>
 
-          {/* Heading */}
           <p className="text-stone-400 dark:text-stone-500 text-sm mb-1">
             {mode === 'signin' ? 'Welcome back' : 'Get started'}
           </p>
@@ -172,7 +166,6 @@ export default function AuthPage() {
             {mode === 'signin' ? 'Sign in' : 'Create account'}
           </h2>
 
-          {/* Mode toggle tabs */}
           <div className="flex bg-stone-100 dark:bg-stone-800 rounded-lg p-1 mb-8 transition-colors">
             {['signin', 'signup'].map((m) => (
               <button
@@ -190,8 +183,6 @@ export default function AuthPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-
-            {/* Name (signup only) */}
             {mode === 'signup' && (
               <div className="border-b border-stone-200 dark:border-stone-700 pb-1
                 focus-within:border-stone-900 dark:focus-within:border-amber-400 transition-colors">
@@ -210,7 +201,6 @@ export default function AuthPage() {
               </div>
             )}
 
-            {/* Email */}
             <div className="border-b border-stone-200 dark:border-stone-700 pb-1
               focus-within:border-stone-900 dark:focus-within:border-amber-400 transition-colors">
               <label className="block text-[10px] text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-2">
@@ -227,7 +217,6 @@ export default function AuthPage() {
               />
             </div>
 
-            {/* Password */}
             <div className="border-b border-stone-200 dark:border-stone-700 pb-1
               focus-within:border-stone-900 dark:focus-within:border-amber-400 transition-colors">
               <label className="block text-[10px] text-stone-400 dark:text-stone-500 uppercase tracking-widest mb-2">
@@ -253,7 +242,6 @@ export default function AuthPage() {
               </div>
             </div>
 
-            {/* Forgot password */}
             {mode === 'signin' && (
               <div className="flex justify-end -mt-2">
                 <button type="button"
@@ -263,7 +251,6 @@ export default function AuthPage() {
               </div>
             )}
 
-            {/* Error / success */}
             {error && (
               <p className="text-red-500 text-xs bg-red-50 dark:bg-red-950/40
                 border border-red-100 dark:border-red-900/50 rounded-lg px-3 py-2">
@@ -277,7 +264,6 @@ export default function AuthPage() {
               </p>
             )}
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
@@ -294,7 +280,7 @@ export default function AuthPage() {
             </button>
           </form>
 
-          {/* Footer */}
+          {/* Footer info moved directly under button */}
           <p className="text-center text-xs text-stone-300 dark:text-stone-600 mt-8">
             {mode === 'signin' ? "Don't have an account? " : 'Already have an account? '}
             <button
