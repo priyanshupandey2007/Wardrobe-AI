@@ -52,15 +52,7 @@ export function AuthProvider({ children }) {
     return { data, error };
   };
 
-  const signInWithGoogle = async () => {
-    return await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        // Pointing to your Vercel production URL instead of the Supabase callback
-        redirectTo: 'https://wardrobe-ai-two-beta.vercel.app'
-      }
-    });
-  };
+
 
   const signOut = async () => {
     await supabase.auth.signOut();
