@@ -8,14 +8,18 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check active sessions and set the user
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
+    // Listen for changes on auth state (logged in, signed out, etc.)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
+      
+      // Clean up the URL hash/parameters after a successful OAuth sign-in
       if (event === 'SIGNED_IN') {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
@@ -36,6 +40,7 @@ export function AuthProvider({ children }) {
       options: { data: { username } }
     });
 
+    // Automatically sign in after a successful sign-up
     if (!error) {
       const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email,
@@ -51,7 +56,8 @@ export function AuthProvider({ children }) {
     return await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: 'https://yinvsgpnlsgmuidiodw.supabase.co/auth/v1/callback'
+        // Pointing to your Vercel production URL instead of the Supabase callback
+        redirectTo: 'https://wardrobe-ai-two-beta.vercel.app'
       }
     });
   };
