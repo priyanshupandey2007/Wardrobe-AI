@@ -1,12 +1,14 @@
 import React, { useState, useRef } from 'react';
 
 export default function App() {
-  // Navigation & Authentication States
-  const [isAuthenticated, setIsAuthenticated] = useState(true); 
+  // ── 🛠️ FIXED STATE ENTRY DOORWAY ──
+  // Changed from true to false so the landing wall from image_4a801e.png acts as the lock screen.
+  const [isAuthenticated, setIsAuthenticated] = useState(false); 
   const [authMode, setAuthMode] = useState('login'); 
   const [currentTab, setCurrentTab] = useState('wardrobe'); 
   const [activeFilter, setActiveFilter] = useState('All');
   const [authError, setAuthError] = useState('');
+  const [isDarkMode, setIsDarkMode] = useState(true); 
 
   // Camera & File Management States
   const [isCameraOpen, setIsCameraOpen] = useState(false);
@@ -14,7 +16,7 @@ export default function App() {
   const videoRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  // Closet Database Pool (Clean blank slate)
+  // Closet Database Pool
   const [items, setItems] = useState([]);
 
   // Inline Editing Trackers
@@ -60,7 +62,6 @@ export default function App() {
       return;
     }
 
-    // Default mock login credentials fallback if fields were reset on logout
     if (!fullName) setFullName('Priyanshu Pandey');
     if (!email) setEmail('priyanshandey2864@gmail.com');
     
@@ -240,85 +241,118 @@ export default function App() {
     ? items 
     : items.filter(item => item.category === activeFilter);
 
+  // Dynamic Theme Styling Object Maps
+  const theme = {
+    bgMain: isDarkMode ? 'bg-[#0C0C0E]' : 'bg-[#F4F4F6]',
+    bgPanel: isDarkMode ? 'bg-[#141311]' : 'bg-[#FFFFFF]',
+    bgCard: isDarkMode ? 'bg-[#1C1C1E]' : 'bg-[#EBEBEF]',
+    textPrimary: isDarkMode ? 'text-white' : 'text-neutral-900',
+    textSecondary: isDarkMode ? 'text-neutral-400' : 'text-neutral-600',
+    border: isDarkMode ? 'border-neutral-800/60' : 'border-neutral-200/80',
+    inputBg: isDarkMode ? 'bg-[#0C0C0E]' : 'bg-[#F4F4F6]',
+    toggleInactive: isDarkMode ? 'text-neutral-500 hover:text-neutral-300' : 'text-neutral-400 hover:text-neutral-600',
+  };
+
+  // Shared Theme Switcher Button Element Blueprint
+  const ThemeToggleButton = () => (
+    <button 
+      onClick={() => setIsDarkMode(!isDarkMode)}
+      type="button"
+      className={`p-2 rounded-xl border ${theme.border} ${isDarkMode ? 'hover:bg-neutral-800 text-[#F5C518]' : 'hover:bg-neutral-100 text-amber-600'} transition-colors shadow-sm`}
+      title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+    >
+      {isDarkMode ? (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707m2.828 9.9a5 5 0 117.072-7.072 5 5 0 01-7.072 7.072z" />
+        </svg>
+      ) : (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+        </svg>
+      )}
+    </button>
+  );
+
   // ═════════════════════════════════════════════
   //  VIEW 1: AUTHENTICATION SCREEN (LANDING)
   // ═════════════════════════════════════════════
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen w-full bg-[#0C0C0E] text-neutral-200 flex flex-col md:flex-row font-sans antialiased selection:bg-[#F5C518] selection:text-black">
+      <div className={`min-h-screen w-full ${theme.bgMain} ${theme.textPrimary} flex flex-col md:flex-row font-sans antialiased selection:bg-[#F5C518] selection:text-black transition-colors duration-300`}>
         
         {/* Left Side Panel: Hero Banner Accent */}
-        <div className="w-full md:w-1/2 bg-[#141311] p-8 md:p-16 flex flex-col justify-between border-b md:border-b-0 md:border-r border-neutral-800/40 relative overflow-hidden">
+        <div className={`w-full md:w-1/2 ${theme.bgPanel} p-8 md:p-16 flex flex-col justify-between border-b md:border-b-0 md:border-r ${theme.border} relative overflow-hidden transition-colors duration-300`}>
           <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-[#C9A84C]/5 rounded-full blur-[120px] pointer-events-none" />
           
           <div className="flex items-center justify-between z-10">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-xl bg-[#F5C518] flex items-center justify-center shadow-md font-mono text-xl font-black text-black">
-                W
-              </div>
-              <span className="text-xl font-bold tracking-tight text-white">Wardrobe AI</span>
+              <div className="w-10 h-10 min-w-[40px] min-h-[40px] rounded-xl bg-[#F5C518] flex items-center justify-center shadow-md font-mono text-xl font-black text-black">W</div>
+              <span className={`text-xl font-bold tracking-tight ${isDarkMode ? 'text-white' : 'text-neutral-900'}`}>Wardrobe AI</span>
             </div>
             <div className="text-xs tracking-widest text-neutral-500 font-mono uppercase">Est. 2024</div>
           </div>
 
           <div className="my-auto py-12 md:py-0 max-w-md z-10">
             <span className="text-xs font-bold uppercase tracking-widest text-[#F5C518]/90 block mb-3">Personal Style</span>
-            <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-[1.1] mb-6">
+            <h2 className={`text-4xl md:text-6xl font-extrabold tracking-tight ${isDarkMode ? 'text-white' : 'text-neutral-900'} leading-[1.1] mb-6`}>
               Dress better.<br />Every day.
             </h2>
-            <p className="text-sm md:text-base text-neutral-400 leading-relaxed font-normal">
+            <p className={`text-sm md:text-base ${theme.textSecondary} leading-relaxed font-normal`}>
               AI that learns your taste and builds outfits you'll actually wear — morning to evening, weekday to weekend.
             </p>
 
             <div className="flex flex-wrap gap-2 mt-8">
               {['AI Outfit Builder', 'Weekly Planner', 'Smart Wardrobe', 'Style Insights'].map((tag) => (
-                <span key={tag} className="text-xs font-medium px-3.5 py-2 rounded-full bg-neutral-900/80 border border-neutral-800/60 text-neutral-300">
+                <span key={tag} className={`text-xs font-medium px-3.5 py-2 rounded-full ${isDarkMode ? 'bg-neutral-900/80 text-neutral-300' : 'bg-neutral-100 text-neutral-700'} border ${theme.border}`}>
                   {tag}
                 </span>
               ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 pt-6 border-t border-neutral-900 z-10">
+          <div className={`grid grid-cols-3 gap-4 pt-6 border-t ${isDarkMode ? 'border-neutral-900' : 'border-neutral-200'} z-10`}>
             <div>
-              <div className="text-2xl md:text-3xl font-bold text-white tracking-tight">2.4k</div>
+              <div className={`text-2xl md:text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-neutral-900'} tracking-tight`}>2.4k</div>
               <div className="text-[10px] uppercase tracking-wider text-neutral-500 font-medium mt-0.5">Outfits created</div>
             </div>
             <div>
-              <div className="text-2xl md:text-3xl font-bold text-white tracking-tight">98%</div>
+              <div className={`text-2xl md:text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-neutral-900'} tracking-tight`}>98%</div>
               <div className="text-[10px] uppercase tracking-wider text-neutral-500 font-medium mt-0.5">Style match</div>
             </div>
             <div>
-              <div className="text-2xl md:text-3xl font-bold text-white tracking-tight">7d</div>
+              <div className={`text-2xl md:text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-neutral-900'} tracking-tight`}>7d</div>
               <div className="text-[10px] uppercase tracking-wider text-neutral-500 font-medium mt-0.5">Weekly planning</div>
             </div>
           </div>
         </div>
 
         {/* Right Side Panel: Interactive Entry Form */}
-        <div className="w-full md:w-1/2 bg-[#0C0C0E] p-8 md:p-16 flex flex-col justify-center items-center relative">
+        <div className={`w-full md:w-1/2 ${theme.bgMain} p-8 md:p-16 flex flex-col justify-center items-center relative transition-colors duration-300`}>
+          <div className="absolute top-6 right-6">
+            <ThemeToggleButton />
+          </div>
+          
           <div className="w-full max-w-sm flex flex-col">
-            
             <div className="mb-6">
               <span className="text-xs text-neutral-500 font-medium block mb-1">
                 {authMode === 'login' ? 'Welcome back' : 'Get started'}
               </span>
-              <h1 className="text-3xl font-bold text-white tracking-tight">
+              <h1 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-neutral-900'} tracking-tight`}>
                 {authMode === 'login' ? 'Sign in' : 'Create account'}
               </h1>
             </div>
 
             {/* Form Toggle Controller */}
-            <div className="grid grid-cols-2 bg-neutral-900/60 p-1 rounded-xl mb-8 border border-neutral-800/40">
+            <div className={`grid grid-cols-2 ${isDarkMode ? 'bg-neutral-900/60' : 'bg-neutral-200/50'} p-1 rounded-xl mb-8 border ${theme.border}`}>
               <button 
                 onClick={() => { setAuthMode('login'); setAuthError(''); }}
-                className={`py-2 text-xs font-semibold rounded-lg transition-all ${authMode === 'login' ? 'bg-[#222226] text-white shadow-sm' : 'text-neutral-400 hover:text-neutral-200'}`}
+                className={`py-2 text-xs font-semibold rounded-lg transition-all ${authMode === 'login' ? (isDarkMode ? 'bg-[#222226] text-white shadow-sm' : 'bg-white text-neutral-900 shadow-sm') : theme.toggleInactive}`}
               >
                 Sign in
               </button>
               <button 
                 onClick={() => { setAuthMode('signup'); setAuthError(''); }}
-                className={`py-2 text-xs font-semibold rounded-lg transition-all ${authMode === 'signup' ? 'bg-[#222226] text-white shadow-sm' : 'text-neutral-400 hover:text-neutral-200'}`}
+                className={`py-2 text-xs font-semibold rounded-lg transition-all ${authMode === 'signup' ? (isDarkMode ? 'bg-[#222226] text-white shadow-sm' : 'bg-white text-neutral-900 shadow-sm') : theme.toggleInactive}`}
               >
                 Sign up
               </button>
@@ -333,7 +367,7 @@ export default function App() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Priyanshu Pandey" 
-                    className="w-full bg-transparent border-b border-neutral-800 py-2.5 text-sm text-white placeholder-neutral-600 outline-none focus:border-[#F5C518] transition-colors"
+                    className={`w-full bg-transparent border-b ${isDarkMode ? 'border-neutral-800 focus:border-[#F5C518]' : 'border-neutral-300 focus:border-neutral-900'} py-2.5 text-sm ${theme.textPrimary} outline-none transition-colors placeholder-neutral-500`}
                   />
                 </div>
               )}
@@ -341,12 +375,11 @@ export default function App() {
               <div>
                 <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-500 mb-1">Email</label>
                 <input 
-                  type="file" // Note: Preserved to match field structure in case of configuration overrides
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com" 
-                  className="w-full bg-transparent border-b border-neutral-800 py-2.5 text-sm text-white placeholder-neutral-600 outline-none focus:border-[#F5C518] transition-colors"
+                  className={`w-full bg-transparent border-b ${isDarkMode ? 'border-neutral-800 focus:border-[#F5C518]' : 'border-neutral-300 focus:border-neutral-900'} py-2.5 text-sm ${theme.textPrimary} outline-none transition-colors placeholder-neutral-500`}
                 />
               </div>
 
@@ -359,7 +392,7 @@ export default function App() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••" 
-                  className="w-full bg-transparent border-b border-neutral-800 py-2.5 text-sm text-white placeholder-neutral-600 outline-none focus:border-[#F5C518] transition-colors pr-10"
+                  className={`w-full bg-transparent border-b ${isDarkMode ? 'border-neutral-800 focus:border-[#F5C518]' : 'border-neutral-300 focus:border-neutral-900'} py-2.5 text-sm ${theme.textPrimary} outline-none transition-colors placeholder-neutral-500`}
                 />
               </div>
 
@@ -402,7 +435,7 @@ export default function App() {
   //  VIEW 2: ENTERPRISE WORKSPACE (DASHBOARD)
   // ═════════════════════════════════════════════
   return (
-    <div className="min-h-screen bg-[#0C0C0E] text-neutral-200 font-sans antialiased">
+    <div className={`min-h-screen ${theme.bgMain} ${theme.textPrimary} font-sans antialiased transition-colors duration-300`}>
       
       <input 
         type="file"
@@ -413,29 +446,32 @@ export default function App() {
       />
 
       {/* ── HEADER ── */}
-      <header className="bg-[#141311] px-6 py-4 flex justify-between items-center border-b border-neutral-800/40 sticky top-0 z-50">
+      <header className={`${theme.bgPanel} px-6 py-4 flex justify-between items-center border-b ${theme.border} sticky top-0 z-50 transition-colors duration-300 shadow-sm`}>
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-[#F5C518] flex items-center justify-center font-mono font-black text-black text-base">W</div>
-          <span className="text-lg font-bold tracking-tight text-white">Wardrobe AI</span>
+          <span className={`text-lg font-bold tracking-tight ${theme.textPrimary}`}>Wardrobe AI</span>
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right hidden sm:block">
-            <p className="text-xs font-semibold text-white">{fullName || 'User Profile'}</p>
+            <p className={`text-xs font-semibold ${theme.textPrimary}`}>{fullName || 'User Profile'}</p>
             <p className="text-[10px] text-neutral-500 font-mono">{email}</p>
           </div>
-          <button onClick={handleLogout} className="px-4 py-1.5 border border-neutral-800 hover:bg-neutral-900 rounded-full text-xs font-medium transition-colors text-neutral-400 hover:text-white">
+          
+          <ThemeToggleButton />
+
+          <button onClick={handleLogout} className={`px-4 py-1.5 border ${theme.border} ${isDarkMode ? 'hover:bg-neutral-800 text-neutral-400 hover:text-white' : 'hover:bg-neutral-100 text-neutral-600 hover:text-neutral-900'} rounded-full text-xs font-medium transition-colors`}>
             Log out
           </button>
         </div>
       </header>
 
       {/* Navigation Tabs */}
-      <nav className="bg-[#141311]/60 backdrop-blur-md flex px-6 border-b border-neutral-800/40 sticky top-[65px] z-40">
+      <nav className={`${theme.bgPanel} bg-opacity-60 backdrop-blur-md flex px-6 border-b ${theme.border} sticky top-[65px] z-40 transition-colors duration-300`}>
         {['wardrobe', 'outfits', 'weekly'].map((tab) => (
           <button
             key={tab}
             onClick={() => setCurrentTab(tab)}
-            className={`px-5 py-3.5 border-b-2 font-medium text-xs tracking-wider uppercase transition-all ${currentTab === tab ? 'border-[#F5C518] text-white font-bold' : 'border-transparent text-neutral-500 hover:text-neutral-300'}`}
+            className={`px-5 py-3.5 border-b-2 font-medium text-xs tracking-wider uppercase transition-all ${currentTab === tab ? 'border-[#F5C518] text-[#F5C518] font-bold' : `border-transparent ${theme.textSecondary}`}`}
           >
             {tab}
           </button>
@@ -449,18 +485,18 @@ export default function App() {
         {currentTab === 'wardrobe' && (
           <div className="space-y-8">
             
-            <div className="bg-[#141311] rounded-2xl p-6 shadow-lg border border-neutral-800/40 flex flex-col gap-6">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-neutral-800/50 pb-4">
+            <div className={`${theme.bgPanel} rounded-2xl p-6 shadow-lg border ${theme.border} flex flex-col gap-6 transition-colors duration-300`}>
+              <div className={`flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b ${isDarkMode ? 'border-neutral-800/50' : 'border-neutral-200'} pb-4`}>
                 <div>
-                  <h2 className="text-base font-bold text-white tracking-tight">Ingest Apparel Modality</h2>
-                  <p className="text-xs text-neutral-400">Upload an image from your device gallery or pull up a live lens scan frame instantly.</p>
+                  <h2 className={`text-base font-bold ${theme.textPrimary} tracking-tight`}>Ingest Apparel Modality</h2>
+                  <p className={`text-xs ${theme.textSecondary}`}>Upload an image from your device gallery or pull up a live lens scan frame instantly.</p>
                 </div>
                 
                 <div className="flex items-center gap-3 w-full sm:w-auto">
                   <button 
                     onClick={handleFileUploadClick}
                     type="button"
-                    className="flex-1 sm:flex-none px-5 py-2.5 bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 group"
+                    className={`flex-1 sm:flex-none px-5 py-2.5 ${isDarkMode ? 'bg-neutral-900 hover:border-neutral-700 text-white' : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-800'} border ${theme.border} rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 group`}
                   >
                     <svg className="w-4 h-4 text-[#F5C518] transition-transform group-hover:-translate-y-0.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
@@ -471,7 +507,7 @@ export default function App() {
                   <button 
                     onClick={startCamera}
                     type="button"
-                    className="flex-1 sm:flex-none px-5 py-2.5 bg-neutral-900 border border-neutral-800 hover:border-neutral-700 text-[#F5C518] rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 group"
+                    className={`flex-1 sm:flex-none px-5 py-2.5 ${isDarkMode ? 'bg-neutral-900 hover:border-neutral-700' : 'bg-neutral-100 hover:bg-neutral-200'} border ${theme.border} text-[#F5C518] rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 group`}
                   >
                     <svg className="w-4 h-4 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
@@ -484,21 +520,21 @@ export default function App() {
 
               <form onSubmit={handleAddItem} className="flex flex-col md:flex-row gap-4 items-end">
                 <div className="flex-1 w-full">
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-2">Item Name (Optional if uploading image)</label>
+                  <label className={`block text-[10px] font-bold uppercase tracking-widest ${theme.textSecondary} mb-2`}>Item Name (Optional if uploading image)</label>
                   <input 
                     type="text" 
                     value={itemName} 
                     onChange={(e) => setItemName(e.target.value)}
                     placeholder="e.g. Silk Formal Dress" 
-                    className="w-full bg-[#0C0C0E] px-4 py-2.5 border border-neutral-800 rounded-xl text-sm text-white placeholder-neutral-600 outline-none focus:border-[#F5C518] transition-colors"
+                    className={`w-full ${theme.inputBg} px-4 py-2.5 border ${theme.border} rounded-xl text-sm ${theme.textPrimary} placeholder-neutral-500 outline-none focus:border-[#F5C518] transition-colors`}
                   />
                 </div>
                 <div className="w-full md:w-52">
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-2">Category Target</label>
+                  <label className={`block text-[10px] font-bold uppercase tracking-widest ${theme.textSecondary} mb-2`}>Category Target</label>
                   <select 
                     value={category} 
                     onChange={(e) => setCategory(e.target.value)} 
-                    className="w-full bg-[#0C0C0E] px-4 py-2.5 border border-neutral-800 rounded-xl text-sm text-white outline-none focus:border-[#F5C518] transition-colors"
+                    className={`w-full ${theme.inputBg} px-4 py-2.5 border ${theme.border} rounded-xl text-sm ${theme.textPrimary} outline-none focus:border-[#F5C518] transition-colors`}
                   >
                     <option>Top</option>
                     <option>Outerwear</option>
@@ -507,7 +543,7 @@ export default function App() {
                   </select>
                 </div>
                 <div className="w-full md:w-28">
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-2">Color Profile</label>
+                  <label className={`block text-[10px] font-bold uppercase tracking-widest ${theme.textSecondary} mb-2`}>Color Profile</label>
                   <div className="flex items-center bg-[#0C0C0E] border border-neutral-800 rounded-xl p-1 h-[42px]">
                     <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="w-full h-full border-0 cursor-pointer rounded-lg bg-transparent" />
                   </div>
@@ -518,12 +554,12 @@ export default function App() {
               </form>
             </div>
 
-            <div className="flex items-center gap-2 border-b border-neutral-900 pb-4">
+            <div className={`flex items-center gap-2 border-b ${isDarkMode ? 'border-neutral-900' : 'border-neutral-200'} pb-4`}>
               {['All', 'Top', 'Outerwear', 'Bottom', 'Shoes'].map((filter) => (
                 <button
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${activeFilter === filter ? 'bg-[#F5C518] text-black shadow-sm' : 'bg-[#141311] text-neutral-400 border border-neutral-800/60 hover:text-white'}`}
+                  className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${activeFilter === filter ? 'bg-[#F5C518] text-black shadow-sm' : `${isDarkMode ? 'bg-neutral-900 text-neutral-400' : 'bg-white text-neutral-600'} border ${theme.border} hover:text-[#F5C518]`}`}
                 >
                   {filter}
                 </button>
@@ -531,18 +567,18 @@ export default function App() {
             </div>
 
             <div>
-              <h3 className="text-xl font-bold text-white tracking-tight mb-4">Closet Inventory Matrix ({filteredItems.length})</h3>
+              <h3 className={`text-xl font-bold ${theme.textPrimary} tracking-tight mb-4`}>Closet Inventory Matrix ({filteredItems.length})</h3>
               
               {filteredItems.length === 0 ? (
-                <div className="text-center py-20 bg-[#141311] border border-dashed border-neutral-800/80 rounded-3xl">
-                  <p className="text-sm text-neutral-500">Your wardrobe is clean and empty. Upload device files or trigger a lens scan to assemble your workspace collection.</p>
+                <div className={`${theme.bgPanel} text-center py-20 border border-dashed ${isDarkMode ? 'border-neutral-800' : 'border-neutral-300'} rounded-3xl transition-colors duration-300`}>
+                  <p className={`text-sm ${theme.textSecondary}`}>Your wardrobe is clean and empty. Upload device files or trigger a lens scan to assemble your workspace collection.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                   {filteredItems.map((item) => (
-                    <div key={item.id} className="bg-[#141311] border border-neutral-800/40 rounded-2xl overflow-hidden shadow-md flex flex-col group hover:border-neutral-700 transition-all relative">
+                    <div key={item.id} className={`${theme.bgPanel} border ${theme.border} rounded-2xl overflow-hidden shadow-md flex flex-col group transition-all duration-300 relative`}>
                       
-                      <div className="h-40 w-full bg-neutral-950 flex items-center justify-center relative border-b border-neutral-900 overflow-hidden">
+                      <div className={`h-40 w-full ${isDarkMode ? 'bg-neutral-950' : 'bg-neutral-100'} flex items-center justify-center relative border-b ${theme.border} overflow-hidden`}>
                         {item.image ? (
                           <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                         ) : (
@@ -558,7 +594,7 @@ export default function App() {
 
                       <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                         <div className="space-y-2">
-                          <span className="text-[9px] font-extrabold tracking-wider uppercase px-2 py-0.5 bg-neutral-900 border border-neutral-800 rounded text-neutral-400 block w-fit">
+                          <span className={`text-[9px] font-extrabold tracking-wider uppercase px-2 py-0.5 ${isDarkMode ? 'bg-neutral-900 text-neutral-400' : 'bg-neutral-200 text-neutral-700'} border ${theme.border} rounded block w-fit`}>
                             {item.category}
                           </span>
                           
@@ -567,15 +603,15 @@ export default function App() {
                               type="text"
                               value={tempEditName}
                               onChange={(e) => setTempEditName(e.target.value)}
-                              className="bg-[#0C0C0E] border border-neutral-700 text-xs text-white px-2 py-1 rounded outline-none focus:border-[#F5C518] w-full"
+                              className={`bg-transparent border ${isDarkMode ? 'border-neutral-700' : 'border-neutral-300'} text-xs ${theme.textPrimary} px-2 py-1 rounded outline-none focus:border-[#F5C518] w-full`}
                               autoFocus
                             />
                           ) : (
-                            <p className="text-sm font-bold text-white tracking-tight truncate">{item.name}</p>
+                            <p className={`text-sm font-bold ${theme.textPrimary} tracking-tight truncate`}>{item.name}</p>
                           )}
                         </div>
 
-                        <div className="flex items-center justify-between pt-2 border-t border-neutral-800/60 mt-1">
+                        <div className={`flex items-center justify-between pt-2 border-t ${isDarkMode ? 'border-neutral-800/60' : 'border-neutral-200'} mt-1`}>
                           {editingId === item.id ? (
                             <div className="flex gap-2">
                               <button onClick={() => saveEdit(item.id)} className="text-xs text-[#F5C518] font-bold hover:underline">Save</button>
@@ -584,7 +620,7 @@ export default function App() {
                           ) : (
                             <button 
                               onClick={() => startEditing(item.id, item.name)}
-                              className="text-xs text-neutral-400 hover:text-white transition-colors flex items-center gap-1"
+                              className={`text-xs ${theme.textSecondary} hover:text-neutral-900 dark:hover:text-white transition-colors flex items-center gap-1`}
                             >
                               Edit name
                             </button>
@@ -607,10 +643,10 @@ export default function App() {
         {/* TAB 2: AI OUTFIT BUILDER */}
         {currentTab === 'outfits' && (
           <div className="space-y-6 max-w-2xl mx-auto">
-            <div className="bg-[#141311] rounded-3xl p-6 border border-neutral-800/40 text-center space-y-4 shadow-xl">
+            <div className={`${theme.bgPanel} rounded-3xl p-6 border ${theme.border} text-center space-y-4 shadow-xl transition-colors duration-300`}>
               <div className="w-12 h-12 rounded-2xl bg-[#F5C518]/10 text-[#F5C518] flex items-center justify-center mx-auto text-xl font-bold">✨</div>
-              <h3 className="text-xl font-bold text-white tracking-tight">AI Lookbook Compiler</h3>
-              <p className="text-sm text-neutral-400 max-w-md mx-auto">Synthesize outfits using items directly from your wardrobe database based on color harmony rules.</p>
+              <h3 className={`text-xl font-bold ${theme.textPrimary} tracking-tight`}>AI Lookbook Compiler</h3>
+              <p className={`text-sm ${theme.textSecondary} max-w-md mx-auto`}>Synthesize outfits using items directly from your wardrobe database based on color harmony rules.</p>
               <button 
                 onClick={handleGenerateOutfit}
                 className="px-6 py-2.5 bg-[#F5C518] hover:bg-[#e0b415] text-black text-sm font-bold rounded-xl transition-all shadow-md"
@@ -620,10 +656,10 @@ export default function App() {
             </div>
 
             {generatedOutfit && (
-              <div className="bg-[#141311] rounded-3xl border border-neutral-800/40 p-6 shadow-2xl space-y-6">
-                <div className="flex justify-between items-center border-b border-neutral-800/60 pb-4">
+              <div className={`${theme.bgPanel} rounded-3xl border ${theme.border} p-6 shadow-2xl space-y-6 transition-colors duration-300`}>
+                <div className={`flex justify-between items-center border-b ${isDarkMode ? 'border-neutral-800/60' : 'border-neutral-200'} pb-4`}>
                   <div>
-                    <h4 className="text-base font-bold text-white">Suggested Fit Strategy</h4>
+                    <h4 className={`text-base font-bold ${theme.textPrimary}`}>Suggested Fit Strategy</h4>
                     <p className="text-xs text-neutral-500 mt-0.5">Optimized item alignment mapping</p>
                   </div>
                   <span className="text-xs font-mono font-bold px-3 py-1 bg-emerald-950/60 border border-emerald-900 text-emerald-400 rounded-full">
@@ -640,8 +676,8 @@ export default function App() {
                   ].map((layer, index) => {
                     if (!layer.item) return null;
                     return (
-                      <div key={index} className="bg-[#0C0C0E] border border-neutral-800/40 rounded-2xl overflow-hidden flex items-center p-3 gap-3">
-                        <div className="w-12 h-12 rounded-lg bg-neutral-900 flex items-center justify-center text-xl overflow-hidden border border-neutral-800 shrink-0">
+                      <div key={index} className={`${theme.bgMain} border ${theme.border} rounded-2xl overflow-hidden flex items-center p-3 gap-3 transition-colors duration-300`}>
+                        <div className={`w-12 h-12 rounded-lg ${isDarkMode ? 'bg-neutral-900' : 'bg-white'} flex items-center justify-center text-xl overflow-hidden border ${theme.border} shrink-0`}>
                           {layer.item.image ? (
                             <img src={layer.item.image} alt="" className="w-full h-full object-cover" />
                           ) : (
@@ -655,7 +691,7 @@ export default function App() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-wide">{layer.label}</p>
-                          <p className="text-xs font-bold text-white truncate mt-0.5">{layer.item.name}</p>
+                          <p className={`text-xs font-bold ${theme.textPrimary} truncate mt-0.5`}>{layer.item.name}</p>
                         </div>
                         <div className="w-3 h-3 rounded-full border border-neutral-700/60 shrink-0" style={{ backgroundColor: layer.item.color }} />
                       </div>
@@ -670,13 +706,13 @@ export default function App() {
         {/* TAB 3: WEEKLY PLANNER */}
         {currentTab === 'weekly' && (
           <div className="space-y-4">
-            <h3 className="text-lg font-bold text-white tracking-tight">Chrono Fit Weekly Lookbook</h3>
+            <h3 className={`text-lg font-bold ${theme.textPrimary} tracking-tight`}>Chrono Fit Weekly Lookbook</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3">
               {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
-                <div key={day} className="bg-[#141311] border border-neutral-800/40 rounded-2xl overflow-hidden shadow-sm flex flex-col min-h-[160px] group hover:border-neutral-700 transition-all">
-                  <div className="bg-neutral-950 text-neutral-400 py-2 text-center text-xs font-bold tracking-wider border-b border-neutral-900">{day}</div>
+                <div key={day} className={`${theme.bgPanel} border ${theme.border} rounded-2xl overflow-hidden shadow-sm flex flex-col min-h-[160px] group hover:border-neutral-500 transition-all duration-300`}>
+                  <div className={`${isDarkMode ? 'bg-neutral-950 text-neutral-400' : 'bg-neutral-100 text-neutral-700'} py-2 text-center text-xs font-bold tracking-wider border-b ${theme.border}`}>{day}</div>
                   <div className="flex-1 flex flex-col items-center justify-center p-4 text-center">
-                    <p className="text-xs text-neutral-600 font-mono">No Fit Assigned</p>
+                    <p className="text-xs text-neutral-500 font-mono">No Fit Assigned</p>
                     <button className="text-[10px] text-[#F5C518] hover:underline mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       Assign Look +
                     </button>
@@ -692,14 +728,14 @@ export default function App() {
       {/* ── LIVE HARDWARE INTERACTIVE CAMERA OVERLAY MODAL ── */}
       {isCameraOpen && (
         <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-          <div className="bg-[#141311] border border-neutral-800 rounded-3xl overflow-hidden max-w-md w-full shadow-2xl flex flex-col">
+          <div className={`${theme.bgPanel} border ${theme.border} rounded-3xl overflow-hidden max-w-md w-full shadow-2xl flex flex-col`}>
             
-            <div className="p-4 border-b border-neutral-800/60 flex justify-between items-center">
+            <div className={`p-4 border-b ${isDarkMode ? 'border-neutral-800/60' : 'border-neutral-200'} flex justify-between items-center`}>
               <div>
-                <h4 className="text-sm font-bold text-white">Live AI Clothing Scanner</h4>
+                <h4 className={`text-sm font-bold ${theme.textPrimary}`}>Live AI Clothing Scanner</h4>
                 <p className="text-[10px] text-neutral-400 mt-0.5">Classification target: <span className="text-[#F5C518] font-bold">{category}</span></p>
               </div>
-              <button onClick={stopCamera} className="p-1.5 text-neutral-400 hover:text-white rounded-lg hover:bg-neutral-900 transition-colors">
+              <button onClick={stopCamera} className={`p-1.5 ${theme.textSecondary} hover:text-white rounded-lg hover:bg-neutral-800 transition-colors`}>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -713,10 +749,10 @@ export default function App() {
               </div>
             </div>
 
-            <div className="p-4 bg-neutral-950 border-t border-neutral-900 flex justify-between gap-3">
+            <div className={`p-4 ${isDarkMode ? 'bg-neutral-950' : 'bg-neutral-100'} border-t ${theme.border} flex justify-between gap-3`}>
               <button 
                 onClick={stopCamera}
-                className="flex-1 py-2 text-xs font-semibold border border-neutral-800 hover:bg-neutral-900 rounded-xl text-neutral-400 hover:text-white transition-colors"
+                className={`flex-1 py-2 text-xs font-semibold border ${theme.border} ${isDarkMode ? 'hover:bg-neutral-900 text-neutral-400' : 'bg-white hover:bg-neutral-50 text-neutral-600'} rounded-xl transition-colors`}
               >
                 Cancel
               </button>
@@ -733,5 +769,5 @@ export default function App() {
       )}
 
     </div>
-  )
+  );
 }
